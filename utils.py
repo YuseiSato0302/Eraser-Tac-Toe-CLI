@@ -2,7 +2,7 @@ import subprocess
 import os
 from constants import ROWS, COLUMNS
 
-def calidate_input(input_str):
+def validate_input(input_str):
     # ユーザーの入力が有効か検証
     input_str = input_str.lower().strip()
     if len(input_str) != 2:

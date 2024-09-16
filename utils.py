@@ -1,4 +1,5 @@
 import subprocess
+import os
 from constants import ROWS, COLUMNS
 
 def calidate_input(input_str):
@@ -11,6 +12,9 @@ def calidate_input(input_str):
 
 def play_bgm(file_path):
     # バックグラウンドでBGMを再生
+    if not os.path.exists(file_path):
+        print(f"警告：BGMファイルが見つかりません({file_path})。BGMなしでゲームを開始します。")
+        return None
     try:
         return subprocess.Popen(["mpg123", "-q", "--loop", "-1", file_path])
     except FileNotFoundError:

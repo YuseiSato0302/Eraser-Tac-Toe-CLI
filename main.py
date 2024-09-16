@@ -10,9 +10,12 @@ game_bgm_process = None
 
 def display_title():
     # タイトルを表示します
-    title_text = "Tic Tac Toe"
-    result = subprocess.run(["figlet", title_text], stdout=subprocess.PIPE)
-    print(result.stdout.decode())
+    try: 
+        title_text = "Tic Tac Toe"
+        result = subprocess.run(["figlet", title_text], stdout=subprocess.PIPE)
+        print(result.stdout.decode())
+    except FileNotFoundError:
+        print("エラー：figletがインストールされていません。README.mdの「必要な環境」を参照してください。") 
     
 def main_menu():
     # メインメニューを表示してユーザーの選択を受け付ける

@@ -23,7 +23,7 @@ def play_bgm(file_path):
                     stderr=subprocess.STDOUT
         )
     except FileNotFoundError:
-        print("エラー：mpg123がインストールされていません。'sudo apt-get install mpg123'でインストールしてください。")
+        print("エラー：mpg123がインストールされていません。README.mdの「必要な環境」を参照してください。")
         return None
     
 def stop_bgm(process):

@@ -27,8 +27,8 @@ class Player:
         oldest_move = self.moves.pop(0)
         board.update_cell(oldest_move, " ")
         
-    #TODO 将来的なAIプレイヤーのクラス(未実装)
-    class AIPlayer(Player):
-        def make_move(self, board):
-            pass
+#TODO 将来的なAIプレイヤーのクラス(未実装)
+class AIPlayer(Player):
+    def make_move(self, board):
+        pass
     

@@ -75,41 +75,26 @@ python main.py
 
 - **Python 3.8** 以上
 - `mpg123`: BGMを再生するために必要です。インストールは以下のコマンドで行えます。
+- `figlet`: タイトルの装飾を出力ために必要です。インストールは以下のコマンドで行えます。
 
 ```bash
 # macOS
 brew install mpg123
+brew install figlet
 
 # Ubuntu/Debian
 sudo apt install mpg123
+sudo apt install figlet
 ```
 
 ---
 
 ## 開発者向け情報
 
-### 1. テストの実行
+### テストの実行
 
 以下のコマンドでテストを実行できます。
 
 ```bash
 python -m unittest discover tests
 ```
-
-### 2. コントリビューション
-
-このプロジェクトに貢献したい方は、以下の手順に従ってください。
-
-1. リポジトリをフォークします。
-2. フォークしたリポジトリをクローンします。
-3. feature-branch を作成し、変更を加えます。
-4. プルリクエストを作成します。
-
----
-
-## ライセンス
-
-このプロジェクトはMITライセンスのもとで公開されています。詳細はLICENSEファイルを参照してください。
-
-
-

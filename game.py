@@ -6,8 +6,8 @@ class Game:
     def __init__(self):
         self.board = Board()
         self.players = [
-            Player("Player 1", PLAYER_SYMBOLS[0]),
-            Player("Player 2", PLAYER_SYMBOLS[1])
+            Player("Player O", PLAYER_SYMBOLS[0]),
+            Player("Player ×", PLAYER_SYMBOLS[1])
         ]
         self.current_player_index = 0
         self.winner = None
@@ -62,7 +62,7 @@ class Game:
             
             if self.is_draw():
                 self.board.display()
-                print("引き分け")
+                print("引き分けです。最大ターン数に達しました。")
                 break
             
             self.switch_player()

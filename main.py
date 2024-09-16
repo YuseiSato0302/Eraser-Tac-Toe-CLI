@@ -16,47 +16,54 @@ def main_menu():
     print("3. オンライン対戦(現在開発中)")
     print("4. 終了")
     print("")
-    choice = input("現在の選択 :")
+    choice = input("選択肢を入力してください(1~4) :")
     return choice
 
 if __name__ == "__main__":
-    while True:
-        # タイトル画面用BGMを再生
-        title_bgm_process = play_bgm("assets/title_bgm.mp3") 
-        
-        display_title()
-        choice = main_menu()
-        
-        # タイトル用BGMを停止
-        stop_bgm(title_bgm_process)
-        
-        if choice == "1":
-            # ゲーム用BGMを再生
-            game_bgm_process = play_bgm("assets/game_bgm.mp3")
+    try:
+        while True:
+            # タイトル画面用BGMを再生
+            title_bgm_process = play_bgm("assets/title_bgm.mp3") 
             
-            game = Game()
-            game.start()
+            display_title()
+            choice = main_menu()
             
-            # ゲーム終了後BGMを停止
-            stop_bgm(game_bgm_process)
+            # タイトル用BGMを停止
+            stop_bgm(title_bgm_process)
+            title_bgm_process = None
             
-            # 再戦するかどうかの確認
-            replay_choice = input("もう一度プレイしますか？(y/n): ")
-            if replay_choice.lower() != "y":
+            if choice == "1":
+                # ゲーム用BGMを再生
+                game_bgm_process = play_bgm("assets/game_bgm.mp3")
+                
+                game = Game()
+                game.start()
+                
+                # ゲーム終了後BGMを停止
+                stop_bgm(game_bgm_process)
+                game_bgm_process = None
+                
+                # 再戦するかどうかの確認
+                replay_choice = input("もう一度プレイしますか？(y/n): ")
+                if replay_choice.lower() != "y":
+                    print("ゲームを終了します。")
+                    break # ゲームを終了
+            elif choice == "2" or choice == "3":
+                print("このモードは現在開発中です。")
+                input("タイトル画面に戻るためにはEnterキーを押してください。")
+                continue  # メインメニューに戻る
+            elif choice == "4":
                 print("ゲームを終了します。")
                 break # ゲームを終了
-            
-        elif choice == "2" or choice == "3":
-            print("このモードは現在開発中です。")
-            input("タイトル画面に戻るためにはEnterキーを押してください。")
-            continue  # メインメニューに戻る
-        elif choice == "4":
-            print("ゲームを終了します。")
-            break # ゲームを終了
-        
-        else:
-            print("無効な入力です。もう一度選択してください。")
-            input("タイトル画面に戻るためにはEnterキーを押してください。")
-            continue
+            else:
+                print("無効な入力です。もう一度選択してください。")
+                input("タイトル画面に戻るためにはEnterキーを押してください。")
+    
+    finally:
+        # プログラム終了時に BGM プロセスを確実に停止
+        if title_bgm_process is not None:
+            stop_bgm(title_bgm_process)
+        if game_bgm_process is not None:
+            stop_bgm(game_bgm_process)    
             
             

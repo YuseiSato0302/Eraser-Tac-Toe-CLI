@@ -16,7 +16,12 @@ def play_bgm(file_path):
         print(f"警告：BGMファイルが見つかりません({file_path})。BGMなしでゲームを開始します。")
         return None
     try:
-        return subprocess.Popen(["mpg123", "-q", "--loop", "-1", file_path])
+        return subprocess.Popen(
+                    ['mpg123', '-q', '--loop', '-1', file_path],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.STDOUT
+        )
     except FileNotFoundError:
         print("エラー：mpg123がインストールされていません。'sudo apt-get install mpg123'でインストールしてください。")
         return None

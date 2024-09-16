@@ -10,12 +10,11 @@ def display_title():
     
 def main_menu():
     # メインメニューを表示してユーザーの選択を受け付ける
-    print("ゲームモードを選択してください：")
+    choice = input("ゲームモードを選択してください：")
     print("1. 2人プレイ")
     print("2. CPU対戦(現在開発中)")
     print("3. オンライン対戦(現在開発中)")
     print("4. 終了")
-    choice = input("選択肢を入力してください：")
     return choice
 
 if __name__ == "__main__":

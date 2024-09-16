@@ -6,4 +6,4 @@ ROWS = ["a", "b", "c"]
 COLUMNS = ["1", "2", "3"]
 
 # プレイヤーのコマの記号
-PLAYER_SYMBOLS = ["O", "X"]
+PLAYER_SYMBOLS = ["O", "×"]

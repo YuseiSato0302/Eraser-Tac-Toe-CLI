@@ -9,7 +9,7 @@ class Player:
     def make_move(self, board):
         # プレイヤーがコマを配置する
         while True:
-            position = input(f"プレイヤー{self.symbol}の番です。コマを置く位置を入力してください(e.g. a1) :").lower().strip()
+            position = input(f"プレイヤー{self.symbol} の番です。コマを置く位置を入力してください(e.g. a1) :").lower().strip()
             if not validate_input(position):
                 print("無効な入力です。もう一度入力してください。")
                 continue

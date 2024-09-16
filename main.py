@@ -1,6 +1,12 @@
 import subprocess
+import sys
+import signal
 from utils import play_bgm, stop_bgm
 from game import Game
+
+# グローバル変数としてBGMプロセスを保持
+title_bgm_process = None
+game_bgm_process = None
 
 def display_title():
     # タイトルを表示します
@@ -19,7 +25,20 @@ def main_menu():
     choice = input("選択肢を入力してください(1~4) :")
     return choice
 
+def signal_handler(sig, frame):
+    # Ctrl+C でプログラムを終了
+    if title_bgm_process is not None:
+        stop_bgm(title_bgm_process)
+    if game_bgm_process is not None:
+        stop_bgm(game_bgm_process)
+    print("\nプログラムを終了します。")
+    sys.exit(0)
+
 if __name__ == "__main__":
+    # シグナルハンドラを登録
+    signal.signal(signal.SIGINT, signal_handler) # Ctrl+C
+    signal.signal(signal.SIGTERM, signal_handler) # 終了要求
+    
     try:
         while True:
             # タイトル画面用BGMを再生

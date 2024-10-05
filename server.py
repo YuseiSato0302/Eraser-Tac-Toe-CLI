@@ -1,4 +1,3 @@
-# インポート群
 import asyncio
 import hashlib
 import json

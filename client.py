@@ -1,4 +1,3 @@
-import asyncio
 import websockets
 import json
 
@@ -123,7 +122,7 @@ async def game_loop(websocket):
 
 async def get_player_move(websocket, board):
     while True:
-        move = input("マスを選択してください（例：a1、棄権する場合は 'q' を入力）: ")
+        move = input("マスを選択してください（棄権する場合は 'q' を入力）: ")
         if move.lower() == 'q':
             return 'q'
         if move in board.cells and board.is_cell_empty(move):

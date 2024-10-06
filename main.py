@@ -24,7 +24,7 @@ def main_menu():
     print("ゲームモードを選択してください：")
     print("1. 2人プレイ")
     print("2. CPU対戦(現在開発中)")
-    print("3. オンライン対戦(現在開発中)")
+    print("3. オンライン対戦")
     print("4. 終了")
     print("")
     choice = input("選択肢を入力してください(1~4) :")

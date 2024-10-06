@@ -264,7 +264,7 @@ async def handle_forfeit(client_id):
             "result": "lose"
         }
     }
-    await websockets.send(json.dumps(response))
+    await websocket.send(json.dumps(response))
     
     # 相手プレイヤーには勝利を通知
     websocket = clients[other_player_id]["websocket"]

@@ -4,6 +4,8 @@ import json
 import random
 import string
 import websockets
+from board import Board
+from constants import PLAYER_SYMBOLS
 
 # ルーム情報を保持
 rooms = {}
@@ -52,13 +54,13 @@ async def create_room(websocket, client_id, payload):
     rooms[room_id] = {
         "players": [client_id],
         "password": password_hash,
-        "board": [" "]*9,
+        "board": Board(),
         "current_turn": client_id,
         "game_over": False
     }
     
     clients[client_id]["room_id"] = room_id
-    clients[client_id]["player_symbol"] = "x"
+    clients[client_id]["player_symbol"] = PLAYER_SYMBOLS[0] 
     
     response = {
         "type": "create_room_response",
@@ -68,7 +70,7 @@ async def create_room(websocket, client_id, payload):
         }
     }
     await websocket.send(json.dumps(response))
-    print(f"ルーム{room_id}を作成しました。")
+    print(f"ルーム{room_id}が作成されました。")
     
 async def join_room(websocket, client_id, paylaod):
     room_id = paylaod.get("room_id")
@@ -125,7 +127,7 @@ async def join_room(websocket, client_id, paylaod):
     
     room["players"].append(client_id)
     clients[client_id]["room_id"] = room_id
-    clients[client_id]["player_symbol"] = "O"
+    clients[client_id]["player_symbol"] = PLAYER_SYMBOLS[1]
     
     response = {
         "type": "join_room_response",
@@ -147,12 +149,14 @@ async def start_game(room_id):
         response = {
             "type": "game_start",
             "data": {
-                "type": "game_start",
+                "message": "ゲームを開始します",
                 "player_symbol": clients[player_id]["player_symbol"]
             }
         }
         await websocket.send(json.dumps(response))
     print(f"ルーム{room_id}でゲームを開始します。")
+    # 最初のゲーム状態を送信
+    await send_game_update(room_id)
     
 async def handle_move(client_id, payload):
     position = payload.get("position")
@@ -165,18 +169,18 @@ async def handle_move(client_id, payload):
     if room["current_turn"] != client_id:
         return
     
-    board = room["board"]
-    index = position[0] * 3 + position[1]
-    if board[index] != " ":
-        # 無効な手の場合は無視
-        return
-    
+    board = room["board"]    
     symbol = clients[client_id]["player_symbol"]
-    board[index] = symbol
+    
+    # 無効な手の場合は何もしない
+    if not board.is_cell_empty(position):
+        return 
+    
+    board.update_cell(position, symbol)
     
     # 勝敗判定
     winner = check_winner(board)
-    if winner or ' ' not in board:
+    if winner or not board.get_empty_cells():
         room["game_over"] = True
         await send_game_over(room_id, winner)
         return 
@@ -186,17 +190,18 @@ async def handle_move(client_id, payload):
     room["current_turn"] = other_player_id
     
     # ゲーム状態の更新を送信
-    await send_game_state(room_id)
+    await send_game_update(room_id)
     
 async def send_game_update(room_id):
     room = rooms[room_id]
+    board = room["board"]
     for player_id in room["players"]:
         websocket = clients[player_id]["websocket"]
         response = {
             "type": "game_update",
             "data": {
-                "board": room["board"],
-                "current_turn": room["current_turn"]
+                "board": board.cells,
+                "current_turn": clients[room["current_turn"]]["player_symbol"]
             }
         }
         await websocket.send(json.dumps(response))
@@ -206,7 +211,7 @@ async def send_game_over(room_id, winner_symbol):
     for player_id in room["players"]:
         websocket = clients[player_id]["websocket"]
         player_symbol = clients[player_id]["player_symbol"]
-        if winner_symbol:
+        if winner_symbol == player_symbol:
             result = "win"
         elif winner_symbol is None:
             result = "draw"
@@ -225,15 +230,20 @@ async def send_game_over(room_id, winner_symbol):
     print(f"ルーム{room_id}を削除しました。")
     
 def check_winner(board):
-    lines = [
-        [0,1,2], [3,4,5], [6,7,8],  # 横
-        [0,3,6], [1,4,7], [2,5,8],  # 縦
-        [0,4,8], [2,4,6]            # 斜め
+    winning_patterns = [
+        ['a1', 'a2', 'a3'],
+        ['b1', 'b2', 'b3'],
+        ['c1', 'c2', 'c3'],
+        ['a1', 'b1', 'c1'],
+        ['a2', 'b2', 'c2'],
+        ['a3', 'b3', 'c3'],
+        ['a1', 'b2', 'c3'],
+        ['a3', 'b2', 'c1']
     ]
-    for line in lines:
-        a, b, c = line
-        if board[a] == board[b] == board[c] != ' ':
-            return board[a]
+    for pattern in winning_patterns:
+        symbols = [board.cells[pos] for pos in pattern]
+        if symbols[0] != ' ' and symbols.count(symbols[0]) == 3:
+            return symbols[0]
     return None
 
 async def handle_forfeit(client_id):
@@ -270,7 +280,7 @@ async def handle_forfeit(client_id):
     del rooms[room_id]
     print(f"クライアント{client_id}が棄権したため、ルーム{room_id}を削除します。")
     
-async def handle_discnnect(client_id):
+async def handle_disconnect(client_id):
     # クライアントの接続所法を削除
     client_info = clients.get(client_id)
     if client_info:
@@ -278,9 +288,10 @@ async def handle_discnnect(client_id):
         if room_id and room_id in rooms:
             await handle_forfeit(client_id)
         del clients[client_id]
+    print(f"クライアント{client_id}の接続情報を削除しました。")
         
 async def main():
-    async with websockets.server(handler, "localhost", 8765):
+    async with websockets.serve(handler, "localhost", 8765):
         print("サーバーを起動しました。")
         await asyncio.Future() # 永久ループ
         

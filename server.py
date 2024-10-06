@@ -257,7 +257,7 @@ async def handle_forfeit(client_id):
     other_player_id = [pid for pid in room["players"] if pid != client_id][0]
     
     # 棄権したプレイヤーには敗北を通知
-    webocket = clients[client_id]["websocket"]
+    websocket = clients[client_id]["websocket"]
     response = {
         "type": "game_over",
         "data": {

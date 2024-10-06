@@ -1,8 +1,10 @@
+import asyncio
 import subprocess
 import sys
 import signal
 from utils import play_bgm, stop_bgm
 from game import Game
+import client 
 
 # グローバル変数としてBGMプロセスを保持
 title_bgm_process = None
@@ -22,7 +24,7 @@ def main_menu():
     print("ゲームモードを選択してください：")
     print("1. 2人プレイ")
     print("2. CPU対戦(現在開発中)")
-    print("3. オンライン対戦(現在開発中)")
+    print("3. オンライン対戦")
     print("4. 終了")
     print("")
     choice = input("選択肢を入力してください(1~4) :")
@@ -70,10 +72,13 @@ if __name__ == "__main__":
                 if replay_choice.lower() != "y":
                     print("ゲームを終了します。")
                     break # ゲームを終了
-            elif choice == "2" or choice == "3":
+            elif choice == "2":
                 print("このモードは現在開発中です。")
                 input("タイトル画面に戻るためにはEnterキーを押してください。")
                 continue  # メインメニューに戻る
+            elif choice == "3":
+                # オンライン対戦モード
+                asyncio.run(client.online_mode())
             elif choice == "4":
                 print("ゲームを終了します。")
                 break # ゲームを終了

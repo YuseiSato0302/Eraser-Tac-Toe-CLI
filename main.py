@@ -10,15 +10,30 @@ import client
 title_bgm_process = None
 game_bgm_process = None
 
-def display_title():
-    # タイトルを表示します
-    try: 
-        title_text = "Tic Tac Toe"
-        result = subprocess.run(["figlet", title_text], stdout=subprocess.PIPE)
-        print(result.stdout.decode())
+def display_title(title_text="Tic Tac Toe"):
+    try:
+        # figletコマンドを実行してタイトルを生成
+        result = subprocess.run(
+            ["figlet", title_text],
+            stdout=subprocess.PIPE,  # 標準出力をキャプチャ
+            stderr=subprocess.PIPE,  # 標準エラー出力をキャプチャ
+            text=True,               # 出力を文字列として扱う
+            check=True               # コマンドが失敗した場合に例外をスロー
+        )
+        print(result.stdout)  # ASCIIアートを表示
     except FileNotFoundError:
-        print("エラー：figletがインストールされていません。README.mdの「必要な環境」を参照してください。") 
-    
+        # figletがインストールされていない場合のエラーメッセージ
+        print("エラー：figletがインストールされていません。README.mdの「必要な環境」を参照してください。")
+    except subprocess.CalledProcessError as e:
+        # コマンドが失敗した場合（例: 無効な引数）のエラーメッセージ
+        print("エラー：figletコマンドの実行に失敗しました。")
+        print(f"詳細: {e.stderr}")
+    except Exception as e:
+        # その他の予期しないエラー
+        print("予期しないエラーが発生しました。")
+        print(f"詳細: {e}")
+        
+            
 def main_menu():
     # メインメニューを表示してユーザーの選択を受け付ける
     print("ゲームモードを選択してください：")
